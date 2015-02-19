@@ -171,6 +171,8 @@
 			foreach ($this->getAliases() as $alias) {
 				$this->messages[$alias] = array();
 
+				reset($this->callbacks[$alias]);
+
 				do {
 					$validation_callback    = current($this->callbacks[$alias]);
 					$this->messages[$alias] = $validation_callback($this->messages[$alias]);
