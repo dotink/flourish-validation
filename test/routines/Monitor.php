@@ -10,7 +10,7 @@
 
 				class Test implements ValidationInterface
 				{
-					public function validate(array $messages) {
+					public function validate(array $messages, Monitor $monitor) {
 						return ['name' => 'Your name is invalid'];
 					}
 				}

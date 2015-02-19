@@ -127,18 +127,6 @@
 
 
 		/**
-		 * Get all aliases tracked by the monitor
-		 *
-		 * @access public
-		 * @return array A list of all registered aliases
-		 */
-		public function getAliases()
-		{
-			return array_keys($this->callbacks);
-		}
-
-
-		/**
 		 * Ignore certain validation messages
 		 *
 		 * This is useful if there are known instances where you do not have a value yet but you
@@ -168,43 +156,42 @@
 		{
 			$this->messages = array();
 
-			foreach ($this->getAliases() as $alias) {
-				$this->messages[$alias] = array();
+			reset($this->callbacks);
+
+			do {
+				$alias    = key($this->callbacks);
+				$messages = array();
 
 				reset($this->callbacks[$alias]);
 
 				do {
-					$validation_callback    = current($this->callbacks[$alias]);
-					$this->messages[$alias] = $validation_callback($this->messages[$alias]);
+					$callback = current($this->callbacks[$alias]);
+					$messages = $callback($messages, $this);
 
 				} while(next($this->callbacks[$alias]));
 
-				if (!count($this->messages[$alias])) {
-					unset($this->messages[$alias]);
-					continue;
-				}
-
 				if (isset($this->ignores[$alias])) {
 					foreach ($this->ignores[$alias] as $message) {
-						if (isset($this->messages[$alias][$message])) {
-							unset($this->messages[$alias][$message]);
+						if (isset($messages[$message])) {
+							unset($messages[$message]);
 						}
 					}
 				}
-			}
+
+				if (count($messages)) {
+					$this->messages[$alias] = $messages;
+				}
+
+			} while (next($this->callbacks));
 
 			if ($return_messages) {
-				$formatted_messages = array();
-
-				foreach ($this->messages as $alias => $messages) {
-					$formatted_messages[$alias] = array();
-
-					foreach ($messages as $message => $value) {
-						$formatted_messages[$alias][$message] = $this->compose($alias, $message);
+				foreach (array_keys($this->messages) as $alias) {
+					foreach (array_keys($this->messages[$alias]) as $message) {
+						$this->messages[$alias][$message] = $this->compose($alias, $message);
 					}
 				}
 
-				return $formatted_messages;
+				return $this->messages;
 			}
 
 			if (count($this->messages)) {

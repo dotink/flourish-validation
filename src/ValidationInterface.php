@@ -17,8 +17,9 @@
 		 *
 		 * @access public
 		 * @param array $message The existing messages for the asset alias
+		 * @param Monitor $monitor The validation monitor for extending validation to related assets
 		 * @return array The new messages for the asset alias (add or remove per validation)
 		 */
-		public function validate(array $messages);
+		public function validate(array $messages, Monitor $monitor);
 	}
 }
