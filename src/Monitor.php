@@ -90,7 +90,7 @@
 		 */
 		public function addService(ValidationServiceInterface $service)
 		{
-			if (array_search($service, $this->services) === FALSE) {
+			if (!in_array($service, $this->services)) {
 				$this->services[] = $service;
 			}
 
@@ -180,20 +180,13 @@
 		 */
 		public function setMessage($alias, $message, $value)
 		{
-			$ignore_message = (
-				isset($this->ignores[$alias])
-				&& array_search($message, $this->ignores[$alias]) !== FALSE
-			);
+			if (!isset($this->ignores[$alias]) || !in_array($message, $this->ignores[$alias])) {
+				if (!isset($this->messages[$alias])) {
+					$this->messages[$alias] = array();
+				}
 
-			if ($ignore_message) {
-				return $this;
+				$this->messages[$alias][$message] = $value;
 			}
-
-			if (!isset($this->messages[$alias])) {
-				$this->messages[$alias] = array();
-			}
-
-			$this->messages[$alias][$message] = $value;
 
 			return $this;
 		}
