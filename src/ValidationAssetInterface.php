@@ -10,16 +10,16 @@
 	 *
 	 * @package Flourish
 	 */
-	interface ValidationInterface
+	interface ValidationAssetInterface
 	{
 		/**
 		 * Validate an asset
 		 *
 		 * @access public
-		 * @param array $message The existing messages for the asset alias
-		 * @param Monitor $monitor The validation monitor for extending validation to related assets
-		 * @return array The new messages for the asset alias (add or remove per validation)
+		 * @param Monitor $monitor The validation monitor
+		 * @param string $alias Thea alias for which this asset is registered
+		 * @return void
 		 */
-		public function validate(array $messages, Monitor $monitor);
+		public function validate(Monitor $monitor, $alias);
 	}
 }

@@ -38,21 +38,18 @@
 
 
 		/**
-		 * Add a new object to the monitor as an aliased asset
+		 * Add a new ValidationAssetInterface object to the monitor as an aliased asset
 		 *
 		 * @access public
 		 * @param string $alias The alias for the object
+		 * @param ValidationAssetInterface $asset The object which can validate
 		 * @return Monitor The called instance for method chaining
 		 */
-		public function addAsset($alias, ValidationInterface $object)
+		public function addAsset($alias, ValidationAssetInterface $asset)
 		{
-			if (!isset($this->assets[$alias])) {
-				$this->assets[$alias] = array();
-			}
+			$this->assets[$alias] = $asset;
 
-			$this->assets[$alias][] = $object;
-
-			$this->addCallback($alias, [$object, 'validate']);
+			$this->addCallback($alias, [$asset, 'validate']);
 
 			return $this;
 		}
@@ -71,11 +68,7 @@
 			$alias = $asset;
 
 			if ($asset instanceof ValidationInterface) {
-				foreach ($this->assets as $alias => $assets) {
-					if ($alias = array_search($asset, $assets) !== FALSE) {
-						break;
-					}
-				}
+				$alias = array_search($asset, $this->assets);
 			}
 
 			settype($alias, 'string');
@@ -85,6 +78,25 @@
 			}
 
 			$this->callbacks[$alias][] = $callback;
+		}
+
+
+		/**
+		 * Add a new ValidationServiceInterface object to the monitor
+		 *
+		 * @access public
+		 * @param ValidationServiceInterface $service The service which canvalidate
+		 * @return Monitor The called instance for method chaining
+		 */
+		public function addService(ValidationServiceInterface $service)
+		{
+			if (array_search($service, $this->services) === FALSE) {
+				$this->services[] = $service;
+			}
+
+			$this->addCallback(NULL, [$service, 'validate']);
+
+			return $this;
 		}
 
 
@@ -127,6 +139,18 @@
 
 
 		/**
+		 * Get all the monitored assets keyed by alias
+		 *
+		 * @access public
+		 * @return array The monitored assets keyed by alias
+		 */
+		public function getAssets()
+		{
+			return $this->assets;
+		}
+
+
+		/**
 		 * Ignore certain validation messages
 		 *
 		 * This is useful if there are known instances where you do not have a value yet but you
@@ -146,6 +170,36 @@
 
 
 		/**
+		 * Set a validation message for a given alias and message name
+		 *
+		 * @access public
+		 * @param string $alias The alias to set the message on
+		 * @param string $message The message name or identifier
+		 * @param string $value The value for the message
+		 * @return Monitor The called instanced for method chaining
+		 */
+		public function setMessage($alias, $message, $value)
+		{
+			$ignore_message = (
+				isset($this->ignores[$alias])
+				&& array_search($message, $this->ignores[$alias]) !== FALSE
+			);
+
+			if ($ignore_message) {
+				return $this;
+			}
+
+			if (!isset($this->messages[$alias])) {
+				$this->messages[$alias] = array();
+			}
+
+			$this->messages[$alias][$message] = $value;
+
+			return $this;
+		}
+
+
+		/**
 		 * Scan all assets for validation errors
 		 *
 		 * @access public
@@ -159,28 +213,20 @@
 			reset($this->callbacks);
 
 			do {
-				$alias    = key($this->callbacks);
-				$messages = array();
+				$alias = key($this->callbacks);
 
 				reset($this->callbacks[$alias]);
 
 				do {
 					$callback = current($this->callbacks[$alias]);
-					$messages = $callback($messages, $this);
+
+					if (!$alias) {
+						$callback($this);
+					} else {
+						$callback($this, $alias);
+					}
 
 				} while(next($this->callbacks[$alias]));
-
-				if (isset($this->ignores[$alias])) {
-					foreach ($this->ignores[$alias] as $message) {
-						if (isset($messages[$message])) {
-							unset($messages[$message]);
-						}
-					}
-				}
-
-				if (count($messages)) {
-					$this->messages[$alias] = $messages;
-				}
 
 			} while (next($this->callbacks));
 

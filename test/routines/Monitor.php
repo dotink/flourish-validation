@@ -1,17 +1,18 @@
 <?php namespace Dotink\Lab
 {
 	use Dotink\Flourish\Monitor;
-	use Dotink\Flourish\ValidationInterface;
+	use Dotink\Flourish\ValidationAssetInterface;
 
 	return [
 		'setup' => function($data, $shared) {
+				needs($data['root'] . '/src/ValidationServiceInterface.php');
+				needs($data['root'] . '/src/ValidationAssetInterface.php');
 				needs($data['root'] . '/src/Monitor.php');
-				needs($data['root'] . '/src/ValidationInterface.php');
 
-				class Test implements ValidationInterface
+				class Test implements ValidationAssetInterface
 				{
-					public function validate(array $messages, Monitor $monitor) {
-						return ['name' => 'Your name is invalid'];
+					public function validate(Monitor $monitor, $alias) {
+						$monitor->setMessage($alias, 'name', 'Your name is invalid');
 					}
 				}
 		},

@@ -70,7 +70,7 @@ Create a new validation monitor
 
 #### <span style="color:#3e6a6e;">addAsset()</span>
 
-Add a new object to the monitor as an aliased asset
+Add a new ValidationAssetInterface object to the monitor as an aliased asset
 
 ###### Parameters
 
@@ -92,6 +92,19 @@ Add a new object to the monitor as an aliased asset
 			</td>
 			<td>
 				The alias for the object
+			</td>
+		</tr>
+					
+		<tr>
+			<td>
+				$asset
+			</td>
+			<td>
+									<a href="../../../interfaces/Dotink/Flourish/ValidationAssetInterface.md">ValidationAssetInterface</a>
+				
+			</td>
+			<td>
+				The object which can validate
 			</td>
 		</tr>
 			
@@ -143,8 +156,7 @@ Add a new callback associate with an alias/asset
 			
 		<tr>
 			<td>
-									<a href="../../../interfaces/Dotink/Flourish/ValidationInterface.md">ValidationInterface</a>
-				
+									ValidationInterface				
 			</td>
 		</tr>
 								
@@ -157,6 +169,52 @@ Add a new callback associate with an alias/asset
 			</td>
 			<td>
 				The callback to handle additional validation
+			</td>
+		</tr>
+			
+	</tbody>
+</table>
+
+###### Returns
+
+<dl>
+	
+		<dt>
+			Monitor
+		</dt>
+		<dd>
+			The called instance for method chaining
+		</dd>
+	
+</dl>
+
+
+<hr />
+
+#### <span style="color:#3e6a6e;">addService()</span>
+
+Add a new ValidationServiceInterface object to the monitor
+
+###### Parameters
+
+<table>
+	<thead>
+		<th>Name</th>
+		<th>Type(s)</th>
+		<th>Description</th>
+	</thead>
+	<tbody>
+			
+		<tr>
+			<td>
+				$service
+			</td>
+			<td>
+									<a href="../../../interfaces/Dotink/Flourish/ValidationServiceInterface.md">ValidationServiceInterface</a>
+				
+			</td>
+			<td>
+				The service which canvalidate
 			</td>
 		</tr>
 			
@@ -309,9 +367,9 @@ Outputs a validation message to the screen with an optional formatting callback
 
 <hr />
 
-#### <span style="color:#3e6a6e;">getAliases()</span>
+#### <span style="color:#3e6a6e;">getAssets()</span>
 
-Get all aliases tracked by the monitor
+Get all the monitored assets keyed by alias
 
 ###### Returns
 
@@ -321,7 +379,7 @@ Get all aliases tracked by the monitor
 			array
 		</dt>
 		<dd>
-			A list of all registered aliases
+			The monitored assets keyed by alias
 		</dd>
 	
 </dl>
@@ -386,6 +444,78 @@ will post-validation.
 		</dt>
 		<dd>
 			The called instance for method chaining
+		</dd>
+	
+</dl>
+
+
+<hr />
+
+#### <span style="color:#3e6a6e;">setMessage()</span>
+
+Set a validation message for a given alias and message name
+
+###### Parameters
+
+<table>
+	<thead>
+		<th>Name</th>
+		<th>Type(s)</th>
+		<th>Description</th>
+	</thead>
+	<tbody>
+			
+		<tr>
+			<td>
+				$alias
+			</td>
+			<td>
+									<a href="http://php.net/language.types.string">string</a>
+				
+			</td>
+			<td>
+				The alias to set the message on
+			</td>
+		</tr>
+					
+		<tr>
+			<td>
+				$message
+			</td>
+			<td>
+									<a href="http://php.net/language.types.string">string</a>
+				
+			</td>
+			<td>
+				The message name or identifier
+			</td>
+		</tr>
+					
+		<tr>
+			<td>
+				$value
+			</td>
+			<td>
+									<a href="http://php.net/language.types.string">string</a>
+				
+			</td>
+			<td>
+				The value for the message
+			</td>
+		</tr>
+			
+	</tbody>
+</table>
+
+###### Returns
+
+<dl>
+	
+		<dt>
+			Monitor
+		</dt>
+		<dd>
+			The called instanced for method chaining
 		</dd>
 	
 </dl>
